@@ -25,7 +25,7 @@ public class ScheduleQueryService implements IScheduleQueryService {
 
     @Override
     public List<ScheduleEntity> findInMonth(OffsetDateTime startAt, OffsetDateTime endAt) {
-        return repository.findByStartAtGreaterThanEqualAndEndAtLessThanEqualOrderByStartAtEndAt(startAt, endAt);
+        return repository.findByStartAtGreaterThanEqualAndEndAtLessThanEqualOrderByStartAtAscEndAtAsc(startAt, endAt);
     }
 
     @Override
