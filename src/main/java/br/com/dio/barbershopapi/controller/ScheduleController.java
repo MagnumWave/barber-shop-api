@@ -2,6 +2,7 @@ package br.com.dio.barbershopapi.controller;
 
 import br.com.dio.barbershopapi.controller.request.SaveScheduleRequest;
 import br.com.dio.barbershopapi.controller.response.SaveScheduleResponse;
+import br.com.dio.barbershopapi.controller.response.ScheduleAppointmentMonthresponse;
 import br.com.dio.barbershopapi.mapper.IScheduleMapper;
 import br.com.dio.barbershopapi.service.IScheduleService;
 import br.com.dio.barbershopapi.service.query.IScheduleQueryService;
@@ -9,6 +10,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.YearMonth;
+
+import static java.time.ZoneOffset.UTC;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
@@ -35,5 +39,16 @@ public class ScheduleController {
         service.delete(id);
     }
 
-
+    @GetMapping("{year}/{month}")
+    ScheduleAppointmentMonthresponse listMonth(@PathVariable final int year, @PathVariable final int month){
+        var yearMonth = YearMonth.of(year, month);
+        var startAt = yearMonth.atDay(1)
+                .atTime(0, 0, 0, 0)
+                .atOffset(UTC);
+        var endAt = yearMonth.atEndOfMonth()
+                .atTime(23, 59, 59, 999_999_999)
+                .atOffset(UTC);
+        var entities = queryService.findInMonth(startAt, endAt);
+        return mapper.toMonthResponse(year, month, entities);
+    }
 }
